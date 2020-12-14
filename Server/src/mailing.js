@@ -1,13 +1,13 @@
 const nodemailer = require("nodemailer");
 const connection = require('./database/db')
-
+const colors = require('colors')
 async function main(email, id) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
-        user: 'checkpcstock@gmail.com',
-        pass: 'Amazoni123'
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASSWORD
         }
     });
 
@@ -23,10 +23,11 @@ async function main(email, id) {
             <a style="font-size=18px;" href=${item.link}>Buy Now</a>`,
         }).then(_ => {
             connection.query("DELETE FROM subscribes WHERE email = ? AND item = ?", [email, id])
+            console.log('[EMAIL] '.green + 'TO: ' + `${email} `.red + 'ITEM: ' + `${id}`.red)
         })
     });
     
-    console.log('Email sent')
+    
 }
 
 module.exports = main

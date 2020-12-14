@@ -31,25 +31,14 @@ function newEgg(url){
         const type = getType(name)
         const inStock = $('.product-inventory').find('strong').text() == ' OUT OF STOCK.' ? 0 : 1
 
-        connection.query("SELECT * FROM items WHERE link = ?", url , async (err, rows) =>{
-            if(err) console.log(err)
-            else {
-                if(rows < 1){
-                    connection.query(`INSERT INTO items (link,store,name,image,manufancturer,price,type,in_stock) VALUES ('${url}',${store} '${name}', '${image}', '${manufancturer}', '${price}', '${type}', '${inStock}')`)
-                    console.log('New record added')
-                }else{
-                    connection.query(`UPDATE items SET price = ?, in_stock = ?, image = ?, last_checked = now() WHERE link = '${url}'`, [price, inStock, image])
-                    console.log(`Updated: ${name} In Stock: ${inStock}`)
-                }
-            }
-        })
+        applyData(url, store, name, image, manufancturer, price, type, inStock)
     })
 }
 
 function bestBuy(url){
     axios.get(url,{
         headers: {
-            Cookie: "intl_splash=false;"
+            Cookie: "intl_splash=false; locStoreId=835;"
         }
     }).then(res => {
         const $ = cheerio.load(res.data)
@@ -60,20 +49,9 @@ function bestBuy(url){
         const manufancturer = getManufancturer(name.toString())
         const price = $('.priceView-customer-price').find('span').html().replace('$', '')
         const type = getType(name)
-        const inStock = $('.add-to-cart-button').html() == 'Sold Out' ? 0 : 1
+        const inStock = $('.add-to-cart-button').text() == 'Add to Cart' ? 1 : 0
 
-        connection.query("SELECT * FROM items WHERE link = ?", url , async (err, rows) =>{
-            if(err) console.log(err)
-            else {
-                if(rows < 1){
-                    connection.query(`INSERT INTO items (link,store,name,image,manufancturer,price,type,in_stock) VALUES ('${url}', '${store}', '${name}', '${image}', '${manufancturer}', '${price}', '${type}', '${inStock}')`)
-                    console.log('New record added')
-                }else{
-                    connection.query(`UPDATE items SET price = ?, in_stock = ?, image = ?, last_checked = now() WHERE link = '${url}'`, [price, inStock, image])
-                    console.log(`Updated: ${name} In Stock: ${inStock}`)
-                }
-            }
-        })
+        applyData(url, store, name, image, manufancturer, price, type, inStock)
     })
 }
 
@@ -90,19 +68,24 @@ function amazon(url){
         const price = $('#priceblock_ourprice').html() == null ? 'N/A' : $('#priceblock_ourprice').html().replace('$', '')
         const type = getType(name)
         const inStock = $('.a-color-state').html().includes('In stock') ? 1 : 0
-        
-        connection.query("SELECT * FROM items WHERE link = ?", url , async (err, rows) =>{
-            if(err) console.log(err)
-            else {
-                if(rows < 1){
-                    connection.query(`INSERT INTO items (link,store,name,image,manufancturer,price,type,in_stock) VALUES ('${url}','${store}', '${name}', '${image}', '${manufancturer}', '${price}', '${type}', '${inStock}')`)
-                    console.log('New record added')
-                }else{
-                    connection.query(`UPDATE items SET price = ?, in_stock = ?, image = ?, last_checked = now() WHERE link = '${url}'`, [price, inStock, image])
-                    console.log(`Updated: ${name} In Stock: ${inStock}`)
-                }
+        applyData(url, store, name, image, manufancturer, price, type, inStock)
+    })
+}
+
+
+function applyData(url, store, name, image, manufancturer, price, type, inStock){
+    connection.query("SELECT * FROM items WHERE link = ?", url , async (err, rows) =>{
+        if(err) console.log(err)
+        else {
+            if(rows < 1){
+                connection.query(`INSERT INTO items (link,store,name,image,manufancturer,price,type,in_stock) VALUES ('${url}','${store}', '${name}', '${image}', '${manufancturer}', '${price}', '${type}', '${inStock}')`)
+                console.log('New record added')
+            }else{
+                connection.query(`UPDATE items SET price = ?, in_stock = ?, last_checked = now() WHERE link = '${url}'`, [price, inStock])
+                name = name.length > 120 ? name.substr(0, 120-1) : name
+                console.log('[UPDATE]'.green + `[${store.toUpperCase()}]: `.red + `${name}` + ` STOCK: `.red + `${inStock}`)
             }
-        })
+        }
     })
 }
 

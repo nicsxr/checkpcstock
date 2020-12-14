@@ -9,7 +9,7 @@ async function updateDatabase(){
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i]
             scrape(row.link)
-            await timer(3000)
+            await timer(300)
         }
         updateDatabase()
     });
@@ -49,12 +49,10 @@ async function getAllSubscribedIds(){
 async function getAllSubscribedEmailsById(id){
     return new Promise((resolve, reject) => {
         connection.query("SELECT * FROM subscribes WHERE item=?",id, async function(err, rows){
-            console.log(rows)
             emails = new Set()
             rows.forEach(row => {
                 emails.add(row.email)
             });
-            console.log(emails)
             return resolve(emails)
         })
     })

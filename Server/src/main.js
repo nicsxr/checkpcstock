@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
+require('dotenv').config()
 
+const colors = require('colors')
 const api = require('./routes/api')
 const {updateEmails, updateDatabase} = require('./updater')
 
@@ -16,6 +18,6 @@ app.use('/api', api)
 
 setInterval(() => {
     updateEmails()
-}, 30000);
-updateDatabase()
+}, 3000);
+//updateDatabase()
 app.listen(8000)
