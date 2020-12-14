@@ -3,8 +3,10 @@ const connection = require('./database/db')
 const colors = require('colors')
 async function main(email, id) {
     let transporter = nodemailer.createTransport({
-        service: 'gmail',
         host: 'smtp.gmail.com',
+        port: 465,
+        pool: true, // This is the field you need to add
+        secure: true,
         auth: {
             user: process.env.EMAIL,
             pass: process.env.EMAIL_PASSWORD
@@ -14,7 +16,7 @@ async function main(email, id) {
     connection.query("SELECT * FROM `items` WHERE id = ?", id, async function(err, item){
         item = item[0]
         await transporter.sendMail({
-            from: '"checkPCstock!" <checkpcstock@gmail.com>',
+            from: process.env.EMAIL,
             to: email,
             subject: "Stock alert!",
             text: "",
