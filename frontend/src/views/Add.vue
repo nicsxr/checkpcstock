@@ -19,11 +19,12 @@ export default {
     },
     methods: {
         pressed() {
-            this.$axios.post('add/', {
-                'url' : this.url
-            }).then(res => {
-                this.data = res.data
-            })
+            // this.$axios.post('add/', {
+            //     'url' : this.url
+            // }).then(res => {
+            //     this.data = res.data
+            // })
+            this.data = 'Currently disabled'
         }
     },
 }
