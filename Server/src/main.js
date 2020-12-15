@@ -23,8 +23,8 @@ if(process.env.NODE_ENV === 'production'){
 
 
 
-setInterval(() => {
-    updateEmails()
-}, 3000);
+// setInterval(() => {
+//     updateEmails()
+// }, 3000);
 //updateDatabase()
 app.listen(8000)

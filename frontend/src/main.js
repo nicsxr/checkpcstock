@@ -10,7 +10,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
 Vue.prototype.$axios = axios
-axios.defaults.baseURL = 'http://192.168.0.104:8000/api/';
+axios.defaults.baseURL = 'https://nicsxr.me/api/';
 Vue.config.productionTip = false
 
 new Vue({

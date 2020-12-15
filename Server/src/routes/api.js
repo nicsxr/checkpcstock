@@ -10,18 +10,46 @@ router.get('/getall', (req, res) => {
     });
 })
 
-router.get('/get/:store/:name', (req, res) => {
-    const name = req.params.name
-    const store = req.params.store
-    if(store == 'all'){
-        connection.query("SELECT * FROM `items` WHERE name LIKE ?", `%${name}%`, async (err, rows) => {
-            res.json(rows)
-        })
-    }else{
-        connection.query("SELECT * FROM `items` WHERE name LIKE ? AND store LIKE ?", [`%${name}%`, `${store}`], async (err, rows) => {
-            res.json(rows)
-        })
+router.get('/get', (req, res) => {
+    const searchWord = req.query.searchWord
+    const stores = req.query.stores
+    const items = req.query.items
+    const inStock = req.query.inStock
+    console.log(req.query)
+
+    let itemQuery = `SELECT * FROM items WHERE name like '%${searchWord}%'`
+
+    // ADD ITEMS
+    if(items){
+        itemQuery += ` AND `
+        for (let i = 0; i < items.length; i++) {
+            if(i == items.length-1){
+                itemQuery += `name LIKE '%${items[i]}%'`
+            }else{
+                itemQuery += `name LIKE '%${items[i]}%' OR `
+            }   
+        }
     }
+
+    if(stores){
+        itemQuery += ` AND `
+        for (let i = 0; i < stores.length; i++) {
+            if(i == stores.length-1){
+                itemQuery += `store LIKE '%${stores[i]}%'`
+            }else{
+                itemQuery += `store LIKE '%${stores[i]}%' OR `
+            }   
+        }
+    }
+
+    if(inStock=='true'){
+        itemQuery += ` AND in_stock = 1`
+    }
+    console.log(itemQuery)
+    
+    connection.query(itemQuery, async (err, rows) => {
+        res.json(rows)
+    })
 
 })
 
