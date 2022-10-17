@@ -1,2 +1,2 @@
-# checkpcstock
-Webapp which checks Amazon, BestBuy and NewEgg stocks.
+# CheckPCStock
+Web applicaton wthat checks Amazon, BestBuy and NewEgg stocks.
