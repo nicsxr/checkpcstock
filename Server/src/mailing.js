@@ -5,7 +5,7 @@ async function main(email, id) {
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 465,
-        pool: true, // This is the field you need to add
+        pool: true,
         secure: true,
         auth: {
             user: process.env.EMAIL,
